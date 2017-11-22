@@ -6,6 +6,10 @@
 require 'scraperwiki'
 require 'mechanize'
 
+def clean_string(string, last=-15, start=18)
+	string[start..last]
+end
+
 def scrap_mp(id, base)
   mp_url = base + "?MpId=" + id
   agent = Mechanize.new
@@ -14,11 +18,11 @@ def scrap_mp(id, base)
   rows.each_with_index do |(row,row_key), row_index|
     terms = row.search("td")
     ScraperWiki.save_sqlite(["id"], {"id" => id + "|row|" + row_index.to_s,"hellenic_parliament_id" => id,
-       "period" => terms[0].text,
-       "date" => terms[1].text,
-       "district" => terms[2].text,
-       "party" => terms[3].text,
-       "description" => terms[4].text
+       "period" => clean_string(terms[0].text, -16),
+       "date" => clean_string(terms[1].text),
+       "district" => clean_string(terms[2].text),
+       "party" => clean_string(terms[3].text),
+       "description" => clean_string(terms[4].text)
      }, 'terms')
   end
 end
@@ -41,6 +45,8 @@ mp.each_with_index do |(value, key), index|
   scrap_mp(value.attr("value"), url)
 end
 
+# query to get current members
+# select distinct data.full_name, terms.period from data inner join terms on data.hellenic_parliament_id = terms.hellenic_parliament_id where period LIKE '%ΙΖ%'
 
 # # Write out to the sqlite database using scraperwiki library
 # ScraperWiki.save_sqlite(["name"], {"name" => "susan", "occupation" => "software developer"})
