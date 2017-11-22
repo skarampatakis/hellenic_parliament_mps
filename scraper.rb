@@ -1,8 +1,10 @@
 # This is a template for a Ruby scraper on morph.io (https://morph.io)
 # including some code snippets below that you should find helpful
+#!/bin/env ruby
+# encoding: utf-8
 
- require 'scraperwiki'
- require 'mechanize'
+require 'scraperwiki'
+require 'mechanize'
 #
  agent = Mechanize.new
 #
@@ -10,8 +12,10 @@
  page = agent.get("http://www.hellenicparliament.gr/Vouleftes/Diatelesantes-Vouleftes-Apo-Ti-Metapolitefsi-Os-Simera")
 #
 # # Find somehing on the page using css selectors
- p page.at('div.content')
-#
+mp = page.search('select.mpsDropdown > option')
+mp.each() do |a|
+  ScraperWiki.save_sqlite(["hellenic_parliament_id"], {"hellenic_parliament_id" => a.attr("value"), "full_name" => a.text})
+end
 # # Write out to the sqlite database using scraperwiki library
 # ScraperWiki.save_sqlite(["name"], {"name" => "susan", "occupation" => "software developer"})
 #
