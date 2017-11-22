@@ -9,12 +9,21 @@ require 'mechanize'
  agent = Mechanize.new
 #
 # # Read in a page
- page = agent.get("http://www.hellenicparliament.gr/Vouleftes/Diatelesantes-Vouleftes-Apo-Ti-Metapolitefsi-Os-Simera")
+url = "http://www.hellenicparliament.gr/Vouleftes/Diatelesantes-Vouleftes-Apo-Ti-Metapolitefsi-Os-Simera"
+ page = agent.get(url)
 #
 # # Find somehing on the page using css selectors
 mp = page.search('select.mpsDropdown > option')
-mp.each() do |a|
-  ScraperWiki.save_sqlite(["hellenic_parliament_id"], {"hellenic_parliament_id" => a.attr("value"), "full_name" => a.text})
+mp.each_with_index do |(value, key), index|
+  if index < 4
+    next
+  end
+  p index, value.text
+  ScraperWiki.save_sqlite(["hellenic_parliament_id"], {"hellenic_parliament_id" => value.attr("value"), "full_name" => value.text})
+end
+
+def scrap_mp(url)
+
 end
 # # Write out to the sqlite database using scraperwiki library
 # ScraperWiki.save_sqlite(["name"], {"name" => "susan", "occupation" => "software developer"})
