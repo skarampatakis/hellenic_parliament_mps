@@ -59,6 +59,8 @@ end
 #
 agent = Mechanize.new
 #
+# drop terms table
+ScraperWiki.sqliteexecute('DROP TABLE terms') rescue nil
 # # Read in a page
 url = "http://www.hellenicparliament.gr/Vouleftes/Diatelesantes-Vouleftes-Apo-Ti-Metapolitefsi-Os-Simera"
 page = agent.get(url)
@@ -76,10 +78,8 @@ mp.each_with_index do |(value, key), index|
   #create the mp
   ScraperWiki.save_sqlite(["hellenic_parliament_id"], {"hellenic_parliament_id" => value.attr("value"), "full_name" => value.text})
   #scrap terms info
-  #scrap_mp(value.attr("value"), url)
+  scrap_mp(value.attr("value"), url)
 end
-#temporal fix
-ScraperWiki.sqliteexecute("delete from terms where 'id' LIKE '%|row|%'")
 
 # query to get current members
 # select distinct data.full_name, terms.period from data inner join terms on data.hellenic_parliament_id = terms.hellenic_parliament_id where period LIKE '%ΙΖ%'
