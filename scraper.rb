@@ -76,8 +76,10 @@ mp.each_with_index do |(value, key), index|
   #create the mp
   ScraperWiki.save_sqlite(["hellenic_parliament_id"], {"hellenic_parliament_id" => value.attr("value"), "full_name" => value.text})
   #scrap terms info
-  scrap_mp(value.attr("value"), url)
+  #scrap_mp(value.attr("value"), url)
 end
+#temporal fix
+ScraperWiki.sqliteexecute("delete from terms where 'id' LIKE '%|row|%'")
 
 # query to get current members
 # select distinct data.full_name, terms.period from data inner join terms on data.hellenic_parliament_id = terms.hellenic_parliament_id where period LIKE '%ΙΖ%'
